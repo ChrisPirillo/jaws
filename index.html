@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO Metadata -->
+    <title>Jaws: The Retro Game - Skill-Based Arcade Challenge</title>
+    <meta name="description" content="Test your nerves in Jaws, a high-stakes retro arcade game. Carefully remove swallowed junk from the shark's mouth before the timer runs out and the jaws snap shut! A precision-based browser experience.">
+    <meta name="keywords" content="Jaws game, retro arcade, browser game, shark game, skill game, Chris Pirillo, arcade games, web game">
+    <link rel="canonical" href="https://pirillo.com/arcade/jaws.html">
+    <meta name="author" content="Chris Pirillo">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pirillo.com/arcade/jaws.html">
+    <meta property="og:title" content="Jaws: The Retro Game">
+    <meta property="og:description" content="The shark has swallowed a bunch of junk! Clear it all before it snaps in this tense retro-style arcade challenge.">
+    <meta property="og:image" content="https://pirillo.com/arcade/images/jaws.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ChrisPirillo">
+    <meta name="twitter:creator" content="@ChrisPirillo">
+    <meta name="twitter:title" content="Jaws: The Retro Game">
+    <meta name="twitter:description" content="Test your precision and speed. Can you save the shark from its junk-filled stomach before the jaws snap shut?">
+    <meta name="twitter:image" content="https://pirillo.com/arcade/images/jaws.png">
+
+    <!-- Resource Hints & Preloads -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bangers&display=swap">
+    <link rel="preload" as="script" href="https://cdn.tailwindcss.com">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Jaws: The Retro Game",
+      "operatingSystem": "Web Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Arcade",
+      "author": {
+        "@type": "Person",
+        "name": "Chris Pirillo"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A retro-themed arcade game where players must drag junk out of a shark's mouth before a timer triggers a 'snap' animation.",
+      "image": "https://pirillo.com/arcade/images/jaws.png"
+    }
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CQ4D3VQ3L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1CQ4D3VQ3L');
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optimized Font Loading */
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap&font-display=swap');
+
+        body {
+            background-color: #001e30;
+            font-family: 'Verdana', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 0;
+        }
+
+        /* --- VISIBLE RIPPLING WATER BACKGROUND --- */
+        .water-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            background: linear-gradient(180deg, #0ea5e9 0%, #003554 100%);
+        }
+
+        .caustic {
+            position: absolute;
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: ripple 12s infinite linear;
+            filter: blur(15px);
+            mix-blend-mode: overlay;
+            will-change: transform, border-radius; /* Performance optimization */
+        }
+
+        .c1 { width: 800px; height: 800px; top: -200px; left: -200px; animation-duration: 20s; }
+        .c2 { width: 600px; height: 600px; top: 20%; right: -100px; animation-duration: 15s; animation-direction: reverse; opacity: 0.3; }
+        .c3 { width: 900px; height: 900px; bottom: -300px; left: 10%; animation-duration: 25s; opacity: 0.25; }
+        .c4 { width: 400px; height: 400px; top: 40%; left: 40%; animation-duration: 14s; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+
+        @keyframes ripple {
+            0% { transform: rotate(0deg) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            33% { transform: rotate(120deg) scale(1.1); border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+            66% { transform: rotate(240deg) scale(0.95); border-radius: 30% 70% 70% 30% / 50% 60% 30% 60%; }
+            100% { transform: rotate(360deg) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+        /* --- GAME LAYOUT --- */
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .shark-wrapper {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8));
+        }
+
+        .svg-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: visible;
+        }
+
+        .layer-back { z-index: 10; }
+        .layer-items-container { z-index: 20; }
+        .layer-front { z-index: 30; pointer-events: none; }
+
+        .shark-skin { fill: url(#skin-gradient); stroke: #0f172a; stroke-width: 2.5; }
+        .shark-belly { fill: url(#belly-gradient); stroke: #334155; stroke-width: 1.5; }
+        .throat-tunnel { fill: url(#throat-gradient); }
+        .tongue-flesh { fill: url(#tongue-gradient); stroke: #9b2c2c; stroke-width: 1; }
+        .mouth-side-wall { fill: #551010; }
+        .tooth { fill: url(#tooth-gradient); stroke: #94a3b8; stroke-width: 1; }
+        .eye { fill: #000; }
+        .jaw-connection { fill: url(#skin-gradient); stroke: #0f172a; stroke-width: 1; }
+        .blackout-bg { fill: #1a0505; stroke: none; }
+
+        .anim-group {
+            transform-origin: 250px 350px;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+        }
+
+        .anim-group.open { transform: translateY(-65px) rotateX(-32deg); }
+        .anim-group.snapped { transform: translateY(5px); }
+        .shaking { animation: shake 0.4s ease-in-out infinite; }
+
+        @keyframes shake {
+            0% { transform: translateY(-65px) rotate(-1.5deg); }
+            50% { transform: translateY(-65px) rotate(1.5deg); }
+            100% { transform: translateY(-65px) rotate(-1.5deg); }
+        }
+
+        .spawn-area {
+            position: absolute;
+            top: 360px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 120px;
+            pointer-events: none;
+        }
+
+        .item {
+            position: absolute;
+            font-size: 38px;
+            cursor: grab;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8));
+            user-select: none;
+            pointer-events: auto;
+            width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.1s;
+        }
+        .item:hover { transform: scale(1.1); }
+        .item:active { cursor: grabbing; transform: scale(0.95); }
+
+        .ui-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .junk-counter {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ef4444; 
+            padding: 10px 25px;
+            border-radius: 12px;
+            color: #fff;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .junk-count-val {
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            line-height: 1;
+            color: #facc15;
+            text-shadow: 2px 2px 0 #a16207;
+        }
+
+        .safe-zone {
+            position: absolute;
+            bottom: 40px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 380px;
+            height: 110px;
+            border: 4px dashed rgba(255,255,255,0.4);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.8);
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.3);
+            z-index: 100;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .safe-zone.highlight {
+            background: rgba(16, 185, 129, 0.4);
+            border-color: #34d399;
+            color: #fff;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(15px);
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+
+        .btn-retro {
+            background: #facc15;
+            color: #000;
+            border: none;
+            padding: 20px 64px;
+            font-family: 'Bangers', cursive;
+            font-size: 2.8rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border-radius: 18px;
+            box-shadow: 0 10px 0 #a16207;
+            transition: all 0.1s;
+        }
+        .btn-retro:hover { background: #fbbf24; transform: scale(1.05); }
+        .btn-retro:active { transform: translateY(6px); box-shadow: 0 0 0 #a16207; }
+
+    </style>
+</head>
+<body>
+    <header class="sr-only">
+        <h1>Jaws: The Retro Game by Chris Pirillo</h1>
+        <p>A skill-based arcade challenge to clear junk from a shark's mouth.</p>
+    </header>
+
+    <!-- RIPPLE BACKGROUND -->
+    <div class="water-container" aria-hidden="true">
+        <div class="caustic c1"></div>
+        <div class="caustic c2"></div>
+        <div class="caustic c3"></div>
+        <div class="caustic c4"></div>
+    </div>
+
+    <!-- SVG DEFS (Shared) -->
+    <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+        <defs>
+            <linearGradient id="skin-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" /> 
+                <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="belly-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1" />
+            </linearGradient>
+            <radialGradient id="throat-gradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#2b0505;stop-opacity:1" />
+            </radialGradient>
+            <linearGradient id="tongue-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#fda4af;stop-opacity:1" /> 
+                <stop offset="40%" style="stop-color:#e11d48;stop-opacity:1" /> 
+                <stop offset="100%" style="stop-color:#881337;stop-opacity:1" /> 
+            </linearGradient>
+            <linearGradient id="tooth-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="60%" style="stop-color:#f1f5f9;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#cbd5e1;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <main class="game-area">
+        <!-- Score/Status Overlay -->
+        <div class="ui-box">
+            <section class="junk-counter" aria-live="polite">
+                <h2 class="text-xs uppercase tracking-widest text-slate-200 mb-1 font-bold">Junk Remaining</h2>
+                <div class="junk-count-val" id="items-left">0</div>
+            </section>
+        </div>
+
+        <div class="shark-wrapper">
+            <!-- LAYER 1: BACKGROUND (Throat, Tongue, Back Body) -->
+            <svg viewBox="0 0 500 500" class="svg-layer layer-back" style="overflow:visible;" role="img" aria-label="Animated Shark Interior">
+                <ellipse cx="250" cy="280" rx="160" ry="220" class="blackout-bg" />
+                <g class="anim-group" id="shark-body-back">
+                    <path d="M 220 180 L 260 -140 Q 320 80 400 180 Z" class="shark-skin" transform="rotate(5, 250, 40) translate(0, 40)" />
+                    <path d="M 90 200 L -60 380 Q 40 350 90 270 Z" class="shark-skin" stroke="#000" />
+                    <path d="M 410 200 L 560 380 Q 460 350 410 270 Z" class="shark-skin" stroke="#000" />
+                </g>
+                <g>
+                    <ellipse cx="250" cy="310" rx="160" ry="130" class="throat-tunnel" />
+                    <path d="M 100 290 Q 70 360 130 420 L 160 360 Z" class="mouth-side-wall" />
+                    <path d="M 400 290 Q 430 360 370 420 L 340 360 Z" class="mouth-side-wall" />
+                </g>
+                <g>
+                    <path d="M 120 330 C 120 330, 200 310, 250 310 C 300 310, 380 330, 380 330 C 400 380, 350 450, 250 450 C 150 450, 100 380, 120 330 Z" class="tongue-flesh" />
+                    <path d="M 250 320 Q 250 380 250 420" stroke="#881337" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+                </g>
+            </svg>
+
+            <!-- LAYER 2: ITEMS CONTAINER -->
+            <div class="spawn-area layer-items-container" id="spawn-area"></div>
+
+            <!-- LAYER 3: FOREGROUND (Jaw, Teeth, Head) -->
+            <svg viewBox="0 0 500 500" class="svg-layer layer-front" style="overflow:visible;" role="img" aria-label="Animated Shark Jaw">
+                <g>
+                    <path d="M 60 230 Q 75 250 80 270 L 100 270 Q 90 250 100 230 Z" class="jaw-connection" />
+                    <path d="M 440 230 Q 425 250 420 270 L 400 270 Q 410 250 400 230 Z" class="jaw-connection" />
+                    <g transform="translate(0, -10)"> 
+                        <path d="M 115 360 L 125 300 L 140 365 Z" class="tooth" transform="rotate(-25, 125, 360)" />
+                        <path d="M 150 380 L 165 315 L 180 385 Z" class="tooth" transform="rotate(-12, 165, 380)" />
+                        <path d="M 195 395 L 210 320 L 225 395 Z" class="tooth" />
+                        <path d="M 235 400 L 250 315 L 265 400 Z" class="tooth" />
+                        <path d="M 275 395 L 290 320 L 305 395 Z" class="tooth" />
+                        <path d="M 320 380 L 335 315 L 350 385 Z" class="tooth" transform="rotate(12, 335, 380)" />
+                        <path d="M 360 365 L 375 300 L 390 370 Z" class="tooth" transform="rotate(25, 375, 360)" />
+                    </g>
+                    <path d="M 90 280 C 90 280, 120 400, 250 400 C 380 400, 410 280, 410 280" fill="none" stroke="#7f1d1d" stroke-width="32" stroke-linecap="round" />
+                    <path d="M 60 230 C 60 480, 250 500, 250 500 C 250 500, 440 480, 440 230 L 400 230 Q 400 390 250 390 Q 100 390 100 230 Z" class="shark-belly" />
+                </g>
+                <g class="anim-group" id="shark-head">
+                    <g transform="translate(-35, -15)">
+                        <path d="M 130 300 L 145 350 L 160 300 Z" class="tooth" />
+                        <path d="M 165 295 L 185 345 L 205 295 Z" class="tooth" />
+                        <path d="M 210 290 L 230 340 L 250 290 Z" class="tooth" />
+                        <path d="M 255 285 L 275 340 L 295 285 Z" class="tooth" />
+                        <path d="M 300 290 L 320 340 L 340 290 Z" class="tooth" />
+                        <path d="M 345 295 L 365 345 L 385 295 Z" class="tooth" />
+                        <path d="M 390 300 L 405 350 L 420 300 Z" class="tooth" />
+                    </g>
+                    <path d="M 100 300 Q 250 210 400 300" fill="#7f1d1d" stroke="#7f1d1d" stroke-width="5" />
+                    <path d="M 45 310 C 45 100, 150 50, 250 50 C 350 50, 455 100, 455 310 L 45 310 Z" class="shark-skin" />
+                    <circle cx="130" cy="190" r="16" class="eye" />
+                    <circle cx="134" cy="186" r="5" fill="#fff" opacity="0.4" />
+                    <circle cx="370" cy="190" r="16" class="eye" />
+                    <circle cx="374" cy="186" r="5" fill="#fff" opacity="0.4" />
+                    <circle cx="180" cy="220" r="5" fill="#000" />
+                    <circle cx="320" cy="220" r="5" fill="#000" />
+                </g>
+            </svg>
+        </div>
+
+        <div class="safe-zone" id="safe-zone">
+            DRAG JUNK HERE
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal active" id="game-modal" role="dialog" aria-labelledby="modal-title">
+        <h2 class="text-9xl text-yellow-400 font-['Bangers'] mb-8 tracking-widest drop-shadow-2xl" id="modal-title">JAWS</h2>
+        <div class="bg-white text-slate-900 p-12 rounded-3xl max-w-lg text-center shadow-2xl">
+            <p class="text-xl mb-12 leading-relaxed font-sans" id="modal-msg">
+                The shark has swallowed a bunch of junk!<br>
+                Carefully remove it from the tongue.<br>
+                <strong>Clear it all before it SNAPS!</strong>
+            </p>
+            <button class="btn-retro" id="start-btn" onclick="startGame()">START GAME</button>
+        </div>
+    </div>
+
+    <footer class="sr-only">
+        <p>Created by Chris Pirillo. Copyright &copy; 2024. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // JAVASCRIPT AS-IS AS REQUESTED
+        const itemsList = ['📷', '🦴', '👢', '⚓', '🔫', '💀', '🏮', '🛞', '⌚', '💍', '📻', '🕶️', '🔑'];
+        let activeItems = [];
+        let isPlaying = false;
+        let snapTimer = null;
+        let shakeTimer = null;
+        let isDragging = false;
+        let draggedItem = null;
+        
+        let musicTimeout = null;
+        let musicStartTime = 0;
+        let totalTimeUntilSnap = 0;
+        let currentNote = 0; 
+
+        const sharkHead = document.getElementById('shark-head');
+        const sharkBack = document.getElementById('shark-body-back');
+        const spawnArea = document.getElementById('spawn-area');
+        const safeZone = document.getElementById('safe-zone');
+        const itemsLeftDisplay = document.getElementById('items-left');
+        const modal = document.getElementById('game-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMsg = document.getElementById('modal-msg');
+        const startBtn = document.getElementById('start-btn');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playMusicNote(frequency, duration) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!Number.isFinite(duration) || duration <= 0) { duration = 0.1; }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.05);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration + 0.1);
+        }
+
+        function musicLoop() {
+            if (!isPlaying) return;
+            const now = Date.now();
+            const elapsed = now - musicStartTime;
+            const remaining = Math.max(0, totalTimeUntilSnap - elapsed);
+            const progress = 1 - (remaining / totalTimeUntilSnap);
+            const minSpeed = 800;
+            const maxSpeed = 120;
+            const currentSpeed = minSpeed - (progress * (minSpeed - maxSpeed));
+            const freq = currentNote === 0 ? 73.42 : 77.78;
+            playMusicNote(freq, currentSpeed / 1000);
+            currentNote = 1 - currentNote;
+            musicTimeout = setTimeout(musicLoop, currentSpeed);
+        }
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            if (type === 'snap') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'score') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(1100, audioCtx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+            }
+        }
+
+        function setSharkState(state) {
+            sharkHead.classList.remove('open', 'snapped', 'shaking');
+            sharkBack.classList.remove('open', 'snapped', 'shaking');
+            if (state === 'open') {
+                sharkHead.classList.add('open');
+                sharkBack.classList.add('open');
+            } else if (state === 'snapped') {
+                sharkHead.classList.add('snapped');
+                sharkBack.classList.add('snapped');
+            } else if (state === 'shaking') {
+                sharkHead.classList.add('open'); 
+                sharkBack.classList.add('open');
+                sharkHead.classList.add('shaking');
+                sharkBack.classList.add('shaking');
+            }
+        }
+
+        function startGame() {
+            isPlaying = true;
+            activeItems = [...itemsList];
+            updateUI();
+            modal.classList.remove('active');
+            setSharkState('open');
+            spawnItems();
+            planSnap();
+            musicStartTime = Date.now();
+            currentNote = 0;
+            musicLoop();
+        }
+
+        function spawnItems() {
+            spawnArea.innerHTML = '';
+            activeItems.forEach((icon, i) => {
+                const el = document.createElement('div');
+                el.classList.add('item');
+                el.textContent = icon;
+                el.id = `item-${i}`;
+                const rX = Math.random() * 160 + 20; 
+                const rY = Math.random() * 50 + 10;
+                const rRot = Math.random() * 360;
+                el.style.left = `${rX}px`;
+                el.style.top = `${rY}px`;
+                el.style.transform = `rotate(${rRot}deg)`;
+                el.addEventListener('mousedown', startDrag);
+                el.addEventListener('touchstart', startDrag, {passive: false});
+                spawnArea.appendChild(el);
+            });
+        }
+
+        function planSnap() {
+            if(!isPlaying) return;
+            totalTimeUntilSnap = (Math.random() * 10000) + 15000;
+            shakeTimer = setTimeout(() => {
+                if(isPlaying) {
+                    sharkHead.classList.add('shaking');
+                    sharkBack.classList.add('shaking');
+                }
+            }, totalTimeUntilSnap - 2000);
+            snapTimer = setTimeout(snapShut, totalTimeUntilSnap);
+        }
+
+        function snapShut() {
+            if(!isPlaying) return;
+            setSharkState('snapped');
+            playSound('snap');
+            if(isDragging) {
+                gameOver(false, "CHOMP! The shark snapped while you were grabbing junk!");
+            } else if (activeItems.length > 0) {
+                gameOver(false, "SNAP! You didn't clear the junk in time.");
+            } else {
+                gameOver(true, "All Junk Cleared! You survived!");
+            }
+        }
+
+        function gameOver(won, msg) {
+            isPlaying = false;
+            clearTimeout(snapTimer);
+            clearTimeout(shakeTimer);
+            clearTimeout(musicTimeout); 
+            if(draggedItem) { draggedItem.remove(); draggedItem = null; isDragging = false; }
+            setTimeout(() => {
+                modalTitle.textContent = won ? "VICTORY" : "GAME OVER";
+                modalTitle.className = won ? "text-8xl text-green-500 font-['Bangers'] mb-8" : "text-8xl text-red-600 font-['Bangers'] mb-8";
+                modalMsg.innerHTML = `${msg}`;
+                startBtn.textContent = won ? "PLAY AGAIN" : "TRY AGAIN";
+                modal.classList.add('active');
+            }, 600);
+        }
+
+        function updateUI() {
+            itemsLeftDisplay.textContent = activeItems.length;
+            if(activeItems.length === 0 && isPlaying) {
+                gameOver(true, "Incredible! A clean sweep!");
+            }
+        }
+
+        function startDrag(e) {
+            if (!isPlaying) return;
+            e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            draggedItem = e.target;
+            isDragging = true;
+            safeZone.classList.add('highlight');
+            document.body.appendChild(draggedItem);
+            draggedItem.style.position = 'fixed';
+            draggedItem.style.zIndex = 1000;
+            draggedItem.style.pointerEvents = 'none'; 
+            moveAt(clientX, clientY);
+            function moveAt(x, y) {
+                if (!draggedItem) return;
+                draggedItem.style.left = (x - 25) + 'px';
+                draggedItem.style.top = (y - 25) + 'px';
+                draggedItem.style.transform = 'scale(1.8)';
+            }
+            function onMouseMove(event) {
+                if (!draggedItem) return; 
+                const cx = event.touches ? event.touches[0].clientX : event.clientX;
+                const cy = event.touches ? event.touches[0].clientY : event.clientY;
+                moveAt(cx, cy);
+            }
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('touchmove', onMouseMove, {passive: false});
+            function endDrag(event) {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('touchmove', onMouseMove);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+                isDragging = false;
+                safeZone.classList.remove('highlight');
+                if (!draggedItem) return;
+                const rect = draggedItem.getBoundingClientRect();
+                const safeRect = safeZone.getBoundingClientRect();
+                const centerX = rect.left + rect.width/2;
+                const centerY = rect.top + rect.height/2;
+                if (centerX >= safeRect.left && centerX <= safeRect.right &&
+                    centerY >= safeRect.top && centerY <= safeRect.bottom) {
+                    playSound('score');
+                    draggedItem.remove();
+                    activeItems.pop();
+                    updateUI();
+                } else {
+                    draggedItem.remove();
+                    const el = document.createElement('div');
+                    el.classList.add('item');
+                    el.textContent = draggedItem.textContent;
+                    el.addEventListener('mousedown', startDrag);
+                    el.addEventListener('touchstart', startDrag, {passive: false});
+                    const rX = Math.random() * 160 + 20; 
+                    const rY = Math.random() * 50 + 10;
+                    el.style.left = `${rX}px`;
+                    el.style.top = `${rY}px`;
+                    el.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    spawnArea.appendChild(el);
+                }
+                draggedItem = null;
+            }
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+        }
+    </script>
+</body>
+</html>
